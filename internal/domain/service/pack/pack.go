@@ -10,23 +10,23 @@ import (
 )
 
 type PackService struct {
-	logger            *log.ZapLogger
-	packageRepository repository.Pack
+	logger         *log.ZapLogger
+	packRepository repository.Pack
 }
 
 func ProvidePackService(
 	logger *log.ZapLogger,
-	packageRepository repository.Pack,
+	packRepository repository.Pack,
 ) service.Pack {
 	return PackService{
 		logger,
-		packageRepository,
+		packRepository,
 	}
 }
 
 func (svc PackService) Find(ctx context.Context) ([]entity.Pack, error) {
 
-	packs, err := svc.packageRepository.Find(ctx)
+	packs, err := svc.packRepository.Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -36,12 +36,12 @@ func (svc PackService) Find(ctx context.Context) ([]entity.Pack, error) {
 
 func (svc PackService) Update(ctx context.Context, packs []entity.Pack) error {
 
-	err := svc.packageRepository.DeleteAll(ctx)
+	err := svc.packRepository.DeleteAll(ctx)
 	if err != nil {
 		return err
 	}
 
-	err = svc.packageRepository.BulkInsert(ctx, packs)
+	err = svc.packRepository.BulkInsert(ctx, packs)
 	if err != nil {
 		return err
 	}
