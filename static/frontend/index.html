@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pack Calculator — RE Partners</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow: #F5C400;
+    --yellow-dark: #d4a800;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --red: #ef4444;
+    --green: #22c55e;
+    --radius: 10px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: var(--text);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  header .logo {
+    width: 38px; height: 38px;
+    background: var(--yellow);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 14px; color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  header h1 { color: #fff; font-size: 18px; font-weight: 600; }
+  header span { color: var(--yellow); font-size: 18px; font-weight: 600; }
+
+  main {
+    flex: 1;
+    max-width: 860px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 640px) {
+    main { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+  }
+  .card h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--muted);
+  }
+
+  label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+
+  input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  input:focus { border-color: var(--yellow); }
+
+  button {
+    margin-top: 14px;
+    width: 100%;
+    padding: 11px;
+    background: var(--yellow);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  button:hover { background: var(--yellow-dark); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+
+  .tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    min-height: 38px;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef9e7;
+    border: 1.5px solid var(--yellow);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .tag button {
+    all: unset;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1;
+    margin: 0; padding: 0; width: auto;
+  }
+  .tag button:hover { color: var(--red); }
+
+  .add-row { display: flex; gap: 8px; }
+  .add-row input { flex: 1; margin: 0; }
+  .add-row button { margin: 0; width: auto; padding: 10px 18px; flex-shrink: 0; }
+
+  /* Result */
+  .result-card { grid-column: 1 / -1; }
+
+  .result-empty {
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .result-summary {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    flex: 1;
+    min-width: 100px;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    text-align: center;
+  }
+  .stat .val {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .stat .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--bg);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  .pack-badge {
+    display: inline-block;
+    background: var(--yellow);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .msg { font-size: 13px; margin-top: 10px; min-height: 20px; }
+  .msg.err { color: var(--red); }
+  .msg.ok  { color: var(--green); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">RE</div>
+  <h1>Pack <span>Calculator</span></h1>
+</header>
+
+<main>
+
+  <!-- LEFT: Order -->
+  <div class="card">
+    <h2>Calculate Order</h2>
+    <label for="order">Items ordered</label>
+    <input type="number" id="order" min="1" placeholder="e.g. 12001" />
+    <button id="calcBtn" onclick="calculate()">Calculate Packs</button>
+    <p class="msg err" id="calcErr"></p>
+  </div>
+
+  <!-- RIGHT: Pack sizes -->
+  <div class="card">
+    <h2>Pack Sizes</h2>
+    <div class="tag-container" id="tags"></div>
+    <div class="add-row">
+      <input type="number" id="newSize" min="1" placeholder="Add size…" onkeydown="if(event.key==='Enter')addSize()" />
+      <button onclick="addSize()">Add</button>
+    </div>
+    <button onclick="saveSizes()" style="margin-top:10px">Save Sizes</button>
+    <p class="msg" id="sizeMsg"></p>
+  </div>
+
+  <!-- BOTTOM: Result -->
+  <div class="card result-card">
+    <h2>Result</h2>
+    <div id="resultArea">
+      <p class="result-empty">Enter an order quantity above and click Calculate.</p>
+    </div>
+  </div>
+
+</main>
+
+<script src="./app.js"></script>
+</body>
+</html>
