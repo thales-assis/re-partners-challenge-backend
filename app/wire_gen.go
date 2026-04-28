@@ -26,15 +26,17 @@ func Build() (Application, func(), error) {
 	if err != nil {
 		return Application{}, nil, err
 	}
+	cors := httpserver.ProvideCORSMiddleware(configConfig)
 	healthCheckHandler := health.ProvideHealthCheckHandler()
 	router := health.ProvideRouter(healthCheckHandler)
 	routes := httpserver.Routes{
 		HealthCheckRouter: router,
 	}
-	handler, err := httprouter.ProvideRouter(logger, configConfig, routes)
+	bunrouterRouter, err := httprouter.ProvideRouter(logger, configConfig, routes)
 	if err != nil {
 		return Application{}, nil, err
 	}
+	handler := httpserver.ProvideHandler(cors, bunrouterRouter)
 	serverOption := &httpserver.ServerOption{
 		Config:  configConfig,
 		Handler: handler,

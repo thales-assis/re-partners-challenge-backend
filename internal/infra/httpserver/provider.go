@@ -7,5 +7,7 @@ import (
 var ProviderSet = wire.NewSet(
 	wire.Struct(new(Routes), "*"),
 	wire.Struct(new(ServerOption), "*"),
+	ProvideCORSMiddleware,
+	ProvideHandler,
 	ProvideHTTPServer,
 )

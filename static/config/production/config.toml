@@ -2,3 +2,15 @@
 prefix      = "/re-partners/shipping-service-api"
 version     = "v1"
 port        = 3001
+
+[system-manager]
+enabled = true
+
+[database]
+name        = "db_inventory_management"
+
+[db.param-name]
+host        = "inventory-management-service-production-api-database-host"
+port        = "inventory-management-service-production-api-database-port"
+user        = "inventory-management-service-production-api-database-user"
+password    = "inventory-management-service-production-api-database-password"

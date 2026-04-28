@@ -2,7 +2,6 @@ package httprouter
 
 import (
 	"fmt"
-	"net/http"
 
 	handlerhttp "github.com/re-partners-challenge-backend/internal/handler/http"
 	"github.com/re-partners-challenge-backend/internal/infra/config"
@@ -21,7 +20,7 @@ func ProvideRouter(
 	logger *zap.Logger,
 	config *config.Config,
 	routes httpserver.Routes,
-) (http.Handler, error) {
+) (*bunrouter.Router, error) {
 
 	router := bunrouter.New()
 

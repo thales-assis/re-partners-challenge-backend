@@ -2,3 +2,18 @@
 prefix      = "/re-partners/shipping-service-api"
 version     = "v1"
 port        = 3000
+
+[server.cors]
+allowed-origins = ["*"]
+allowed-methods = ["HEAD", "GET", "POST", "PUT", "PATCH", "DELETE"]
+allowed-headers = ["*"]
+
+[system-manager]
+enabled = false
+
+[database]
+name        = "db_inventory_management"
+host        = "localhost"
+port        = "3306"
+user        = "root"
+password    = "root"
