@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: re-partners-backend
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: static/frontend/Dockerfile
+    container_name: re-partners-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
