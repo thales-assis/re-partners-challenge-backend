@@ -7,11 +7,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type LoggerField struct {
-	FieldName  string
-	FieldValue interface{}
-}
-
 type ZapLogger struct {
 	logger *zap.Logger
 }
