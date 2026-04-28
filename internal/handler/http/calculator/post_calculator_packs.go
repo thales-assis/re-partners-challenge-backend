@@ -19,6 +19,17 @@ func ProvidePostCalculatorPackHandler(
 	return HandleCalculatorPack(logger, calculatorUseCase)
 }
 
+// HandleCalculatorPack godoc
+// @Summary Calculate packs by amount
+// @Description Calculates the optimal pack combination for a requested amount.
+// @Tags calculator
+// @Accept json
+// @Produce json
+// @Param payload body viewmodel.CalculatorPacksRequest true "Calculator payload"
+// @Success 200 {array} viewmodel.CalculatorPacksResponse
+// @Failure 422 {object} viewmodel.HttpErrorResponse
+// @Failure 500 {object} viewmodel.HttpErrorResponse
+// @Router /calculator [post]
 func HandleCalculatorPack(
 	logger *log.ZapLogger,
 	calculatorUseCase usecase.Calculator,

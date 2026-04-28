@@ -8,7 +8,7 @@ import (
 )
 
 type ZapLogger struct {
-	logger logger *zap.Logger
+	logger *zap.Logger
 }
 
 func ProvideLogger() (*ZapLogger, error) {

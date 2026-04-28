@@ -17,6 +17,14 @@ func ProvideGetPacksHandler(
 	return HandleGetPacks(logger, packUseCase)
 }
 
+// HandleGetPacks godoc
+// @Summary List pack sizes
+// @Description Returns all configured package sizes.
+// @Tags packs
+// @Produce json
+// @Success 200 {object} viewmodel.GetPacksResponse
+// @Failure 500 {object} viewmodel.HttpErrorResponse
+// @Router /packs [get]
 func HandleGetPacks(
 	logger *log.ZapLogger,
 	packUseCase usecase.Pack,

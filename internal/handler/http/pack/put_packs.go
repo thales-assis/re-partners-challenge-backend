@@ -19,6 +19,17 @@ func ProvideUpdatePacksHandler(
 	return HandleUpdatePacks(logger, packUseCase)
 }
 
+// HandleUpdatePacks godoc
+// @Summary Update pack sizes
+// @Description Replaces all configured package sizes.
+// @Tags packs
+// @Accept json
+// @Produce json
+// @Param payload body viewmodel.UpdateAllPacksRequest true "Pack sizes payload"
+// @Success 204
+// @Failure 422 {object} viewmodel.HttpErrorResponse
+// @Failure 500 {object} viewmodel.HttpErrorResponse
+// @Router /packs [put]
 func HandleUpdatePacks(
 	logger *log.ZapLogger,
 	packUseCase usecase.Pack,

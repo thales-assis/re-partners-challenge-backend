@@ -4,5 +4,8 @@ tests:
 wire:
 	wire ./app
 
+swagger:
+	go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/server/main.go -o docs
+
 watch:
 	air server --port 8080

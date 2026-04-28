@@ -3,10 +3,12 @@ package httprouter
 import (
 	"fmt"
 
+	_ "github.com/re-partners-challenge-backend/docs"
 	handlerhttp "github.com/re-partners-challenge-backend/internal/handler/http"
 	"github.com/re-partners-challenge-backend/internal/infra/config"
 	"github.com/re-partners-challenge-backend/internal/infra/httpserver"
 	"github.com/re-partners-challenge-backend/internal/infra/log"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 
 	"github.com/uptrace/bunrouter"
 )
@@ -49,6 +51,15 @@ func ProvideRouter(
 			router.Register(groupHandler.group)
 		}
 	}
+
+	router.GET(
+		fmt.Sprintf("%s/swagger/*path", basePrefix),
+		bunrouter.HTTPHandler(
+			httpSwagger.Handler(
+				httpSwagger.URL(fmt.Sprintf("%s/swagger/doc.json", basePrefix)),
+			),
+		),
+	)
 
 	return router, nil
 }

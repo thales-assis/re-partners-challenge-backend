@@ -1,0 +1,154 @@
+definitions:
+  viewmodel.CalculatorPacksRequest:
+    properties:
+      amount:
+        example: 500000
+        type: integer
+    type: object
+  viewmodel.CalculatorPacksResponse:
+    properties:
+      pack_size:
+        example: 23
+        type: integer
+      quantity:
+        example: 2
+        type: integer
+    type: object
+  viewmodel.GetPacksResponse:
+    properties:
+      pack_sizes:
+        items:
+          type: integer
+        type: array
+    type: object
+  viewmodel.HealthCheckResponse:
+    properties:
+      status:
+        example: OK
+        type: string
+    type: object
+  viewmodel.HttpErrorResponse:
+    properties:
+      code:
+        example: invalid-request-body
+        type: string
+      errors:
+        items:
+          $ref: '#/definitions/viewmodel.validationError'
+        type: array
+      message:
+        example: some parameter in the request body is invalid
+        type: string
+      status:
+        example: 422
+        type: integer
+    type: object
+  viewmodel.UpdateAllPacksRequest:
+    properties:
+      pack_sizes:
+        items:
+          type: integer
+        type: array
+    type: object
+  viewmodel.validationError:
+    properties:
+      message:
+        example: must be a valid quantity with value greater than 0
+        type: string
+      parameter:
+        example: quantity
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /calculator:
+    post:
+      consumes:
+      - application/json
+      description: Calculates the optimal pack combination for a requested amount.
+      parameters:
+      - description: Calculator payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/viewmodel.CalculatorPacksRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/viewmodel.CalculatorPacksResponse'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/viewmodel.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewmodel.HttpErrorResponse'
+      summary: Calculate packs by amount
+      tags:
+      - calculator
+  /health:
+    get:
+      description: Returns the current API health status.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewmodel.HealthCheckResponse'
+      summary: Check API health
+      tags:
+      - health
+  /packs:
+    get:
+      description: Returns all configured package sizes.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewmodel.GetPacksResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewmodel.HttpErrorResponse'
+      summary: List pack sizes
+      tags:
+      - packs
+    put:
+      consumes:
+      - application/json
+      description: Replaces all configured package sizes.
+      parameters:
+      - description: Pack sizes payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/viewmodel.UpdateAllPacksRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/viewmodel.HttpErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewmodel.HttpErrorResponse'
+      summary: Update pack sizes
+      tags:
+      - packs
+swagger: "2.0"
