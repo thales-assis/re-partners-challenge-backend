@@ -1,0 +1,4 @@
+[server]
+prefix      = "/re-partners/shipping-service-api"
+version     = "v1"
+port        = 3000

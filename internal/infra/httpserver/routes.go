@@ -1,0 +1,16 @@
+package httpserver
+
+import (
+	"github.com/re-partners-challenge-backend/internal/handler/http"
+	"github.com/re-partners-challenge-backend/internal/handler/http/health"
+)
+
+type Routes struct {
+	HealthCheckRouter health.Router
+}
+
+func (r Routes) Open() []http.Router {
+	return []http.Router{
+		r.HealthCheckRouter,
+	}
+}

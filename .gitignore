@@ -18,3 +18,9 @@
 
 # Files 
 *.env
+
+cmd/server/config.toml
+
+/config.toml
+/tmp
+.DS_Store

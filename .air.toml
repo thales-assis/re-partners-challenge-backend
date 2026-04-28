@@ -1,0 +1,17 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+bin = "tmp/app"
+pre_cmd = ["cp ./static/config/development/config.toml ."]
+cmd = "go build -gcflags=all=\"-N -l\" -tags dev -o ./tmp/app ./cmd/server/main.go"
+
+exclude_regex = ["_test.go"]
+stop_on_error = true
+
+[misc]
+clean_on_exit = true
+
+[screen]
+clear_on_rebuild = true
+keep_scroll = true
