@@ -6,9 +6,9 @@ import (
 	handlerhttp "github.com/re-partners-challenge-backend/internal/handler/http"
 	"github.com/re-partners-challenge-backend/internal/infra/config"
 	"github.com/re-partners-challenge-backend/internal/infra/httpserver"
+	"github.com/re-partners-challenge-backend/internal/infra/log"
 
 	"github.com/uptrace/bunrouter"
-	"go.uber.org/zap"
 )
 
 type GroupHandler struct {
@@ -17,21 +17,30 @@ type GroupHandler struct {
 }
 
 func ProvideRouter(
-	logger *zap.Logger,
+	logger *log.ZapLogger,
 	config *config.Config,
 	routes httpserver.Routes,
+	middlewaresFunc ...bunrouter.MiddlewareFunc,
 ) (*bunrouter.Router, error) {
 
-	router := bunrouter.New()
+	middlewares := bunrouter.Use(middlewaresFunc...)
+
+	router := bunrouter.New(middlewares)
 
 	basePrefix := fmt.Sprintf("%s/%s", config.Server.Prefix, config.Server.Version)
 
 	openRoutes := router.NewGroup(basePrefix)
 
+	apiRoutes := openRoutes.Use( /* add some middlewares (for exemple: auth) */ )
+
 	groupHandlers := []GroupHandler{
 		{
 			group:   openRoutes,
 			routers: routes.Open(),
+		},
+		{
+			group:   apiRoutes,
+			routers: routes.API(),
 		},
 	}
 

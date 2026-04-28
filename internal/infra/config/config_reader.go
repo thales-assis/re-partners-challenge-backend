@@ -1,8 +1,8 @@
 package config
 
 import (
+	"github.com/re-partners-challenge-backend/internal/infra/log"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 )
 
 const (
@@ -12,11 +12,11 @@ const (
 )
 
 type ConfigReader struct {
-	logger *zap.Logger
+	logger *log.ZapLogger
 }
 
 func ProvideConfigReader(
-	logger *zap.Logger,
+	logger *log.ZapLogger,
 ) ConfigReader {
 	return ConfigReader{
 		logger,

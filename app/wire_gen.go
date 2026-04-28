@@ -7,21 +7,27 @@
 package app
 
 import (
+	"github.com/re-partners-challenge-backend/internal/domain/service/package"
 	"github.com/re-partners-challenge-backend/internal/handler/http/health"
+	"github.com/re-partners-challenge-backend/internal/handler/http/httppackage"
 	"github.com/re-partners-challenge-backend/internal/infra/config"
 	"github.com/re-partners-challenge-backend/internal/infra/httprouter"
 	"github.com/re-partners-challenge-backend/internal/infra/httpserver"
 	"github.com/re-partners-challenge-backend/internal/infra/log"
+	"github.com/re-partners-challenge-backend/internal/infra/middleware"
+	"github.com/re-partners-challenge-backend/internal/persistence/database"
+	"github.com/re-partners-challenge-backend/internal/persistence/packagepersistence"
+	"github.com/re-partners-challenge-backend/internal/usecase/packageusecase"
 )
 
 // Injectors from wire.go:
 
 func Build() (Application, func(), error) {
-	logger, err := log.ProvideZapLogger()
+	zapLogger, err := log.ProvideLogger()
 	if err != nil {
 		return Application{}, nil, err
 	}
-	configReader := config.ProvideConfigReader(logger)
+	configReader := config.ProvideConfigReader(zapLogger)
 	configConfig, err := config.ProvideConfig(configReader)
 	if err != nil {
 		return Application{}, nil, err
@@ -29,10 +35,20 @@ func Build() (Application, func(), error) {
 	cors := httpserver.ProvideCORSMiddleware(configConfig)
 	healthCheckHandler := health.ProvideHealthCheckHandler()
 	router := health.ProvideRouter(healthCheckHandler)
+	fakeDatabase := database.ProvideDatabase(zapLogger)
+	repositoryPackage := packagepersistence.ProvidePackageRepository(zapLogger, fakeDatabase)
+	servicePackage := packageservice.ProvidePackageService(zapLogger, repositoryPackage)
+	usecasePackage := packageusecase.ProvidePackageUseCase(zapLogger, servicePackage)
+	getPackagesHandler := httppackage.ProvideGetPackagesHandler(zapLogger, usecasePackage)
+	updatePackagesHandler := httppackage.ProvideUpdatePackagesHandler(zapLogger, usecasePackage)
+	httppackageRouter := httppackage.ProvideRouter(getPackagesHandler, updatePackagesHandler)
 	routes := httpserver.Routes{
 		HealthCheckRouter: router,
+		PackageRouter:     httppackageRouter,
 	}
-	bunrouterRouter, err := httprouter.ProvideRouter(logger, configConfig, routes)
+	middlewareMiddleware := middleware.ProvideErrorHandlerMiddleware(zapLogger)
+	v := httpserver.ProvideCoreMiddlewares(zapLogger, middlewareMiddleware)
+	bunrouterRouter, err := httprouter.ProvideRouter(zapLogger, configConfig, routes, v...)
 	if err != nil {
 		return Application{}, nil, err
 	}
@@ -40,7 +56,7 @@ func Build() (Application, func(), error) {
 	serverOption := &httpserver.ServerOption{
 		Config:  configConfig,
 		Handler: handler,
-		Logger:  logger,
+		Logger:  zapLogger,
 	}
 	server := httpserver.ProvideHTTPServer(serverOption)
 	application := ProvideApplication(configConfig, server)

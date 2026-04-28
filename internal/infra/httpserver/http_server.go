@@ -9,13 +9,13 @@ import (
 	"time"
 
 	"github.com/re-partners-challenge-backend/internal/infra/config"
-	"go.uber.org/zap"
+	"github.com/re-partners-challenge-backend/internal/infra/log"
 )
 
 type Server struct {
 	config           *config.ServerConfig
 	handler          http.Handler
-	logger           *zap.Logger
+	logger           *log.ZapLogger
 	server           *http.Server
 	onBootstrapHooks []func(ctx context.Context) error
 	onShutDownHooks  []func(ctx context.Context) error
@@ -24,7 +24,7 @@ type Server struct {
 type ServerOption struct {
 	Config  *config.Config
 	Handler http.Handler
-	Logger  *zap.Logger
+	Logger  *log.ZapLogger
 }
 
 func ProvideHTTPServer(opt *ServerOption) *Server {
@@ -59,11 +59,18 @@ func (s *Server) Start() error {
 	backgroundCtx := context.Background()
 	for _, onBootstrap := range s.onBootstrapHooks {
 		if err := onBootstrap(backgroundCtx); err != nil {
-			s.logger.Error("a bootstrap func returned an error", zap.Error(err))
+
+			s.logger.Error("a bootstrap func returned an error", log.LoggerField{
+				FieldName:  "err",
+				FieldValue: err,
+			})
 		}
 	}
 
-	s.logger.Info("Server is running", zap.String("address", s.config.Address()))
+	s.logger.Info("Server is running", log.LoggerField{
+		FieldName:  "address",
+		FieldValue: s.config.Address(),
+	})
 
 	errorChannel := make(chan error, 1)
 	stopSignalChannel := make(chan os.Signal, 1)
@@ -77,25 +84,37 @@ func (s *Server) Start() error {
 	select {
 	case err := <-errorChannel:
 
-		s.logger.Error("failed to start the server listener", zap.Error(err))
+		s.logger.Error("failed to start the server listener", log.LoggerField{
+			FieldName:  "err",
+			FieldValue: err,
+		})
 
 		return err
 
 	case sign := <-stopSignalChannel:
 
-		s.logger.Info("received signal to stop the server", zap.String("signal", sign.String()))
+		s.logger.Info("received signal to stop the server", log.LoggerField{
+			FieldName:  "signal",
+			FieldValue: sign.String(),
+		})
 
 		ctx, cancel := context.WithTimeout(backgroundCtx, time.Minute*5)
 		defer cancel()
 
 		if err := s.server.Shutdown(ctx); err != nil {
-			s.logger.Error("failed to stop the server listener", zap.Error(err))
+			s.logger.Error("failed to stop the server listener", log.LoggerField{
+				FieldName:  "err",
+				FieldValue: err,
+			})
 			return err
 		}
 
 		for _, onShutDown := range s.onShutDownHooks {
 			if err := onShutDown(ctx); err != nil {
-				s.logger.Error("a shutdown func returned a error", zap.Error(err))
+				s.logger.Error("a shutdown func returned a error", log.LoggerField{
+					FieldName:  "err",
+					FieldValue: err,
+				})
 			}
 		}
 
