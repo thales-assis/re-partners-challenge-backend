@@ -1,4 +1,4 @@
-package httppackage
+package pack
 
 import (
 	"net/http"
@@ -8,24 +8,24 @@ import (
 	"github.com/uptrace/bunrouter"
 )
 
-type GetPackagesHandler bunrouter.HandlerFunc
+type GetPacksHandler bunrouter.HandlerFunc
 
-func ProvideGetPackagesHandler(
+func ProvideGetPacksHandler(
 	logger *log.ZapLogger,
-	packageUseCase usecase.Package,
-) GetPackagesHandler {
-	return HandleGetPackages(logger, packageUseCase)
+	packUseCase usecase.Pack,
+) GetPacksHandler {
+	return HandleGetPacks(logger, packUseCase)
 }
 
-func HandleGetPackages(
+func HandleGetPacks(
 	logger *log.ZapLogger,
-	packageUseCase usecase.Package,
-) GetPackagesHandler {
+	packUseCase usecase.Pack,
+) GetPacksHandler {
 	return func(w http.ResponseWriter, req bunrouter.Request) error {
 
 		ctx := req.Context()
 
-		response, err := packageUseCase.FindAll(ctx)
+		response, err := packUseCase.FindAll(ctx)
 		if err != nil {
 			return err
 		}

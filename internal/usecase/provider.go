@@ -2,9 +2,11 @@ package usecase
 
 import (
 	"github.com/google/wire"
-	"github.com/re-partners-challenge-backend/internal/usecase/packageusecase"
+	"github.com/re-partners-challenge-backend/internal/usecase/calculatorusecase"
+	"github.com/re-partners-challenge-backend/internal/usecase/packusecase"
 )
 
 var ProviderSet = wire.NewSet(
-	packageusecase.ProviderSet,
+	calculatorusecase.ProviderSet,
+	packusecase.ProviderSet,
 )

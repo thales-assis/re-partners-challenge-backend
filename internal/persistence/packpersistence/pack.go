@@ -1,4 +1,4 @@
-package packagepersistence
+package packpersistence
 
 import (
 	"context"
@@ -9,40 +9,40 @@ import (
 	"github.com/re-partners-challenge-backend/internal/persistence/database"
 )
 
-type PackageRepository struct {
+type PackRepository struct {
 	logger *log.ZapLogger
 	fakeDB *database.FakeDatabase
 }
 
-func ProvidePackageRepository(
+func ProvidePackRepository(
 	logger *log.ZapLogger,
 	fakeDB *database.FakeDatabase,
-) repository.Package {
-	return PackageRepository{
+) repository.Pack {
+	return PackRepository{
 		logger,
 		fakeDB,
 	}
 }
 
-func (p PackageRepository) Find(ctx context.Context) ([]entity.Package, error) {
+func (p PackRepository) Find(ctx context.Context) ([]entity.Pack, error) {
 
-	packages := make([]entity.Package, 0, len(p.fakeDB.Records))
+	packs := make([]entity.Pack, 0, len(p.fakeDB.Records))
 
 	for _, pkg := range p.fakeDB.Records {
-		packages = append(packages, pkg)
+		packs = append(packs, pkg)
 	}
 
-	return packages, nil
+	return packs, nil
 
 }
 
-func (p PackageRepository) BulkInsert(ctx context.Context, packages []entity.Package) error {
+func (p PackRepository) BulkInsert(ctx context.Context, packs []entity.Pack) error {
 
-	for _, pkg := range packages {
+	for _, pkg := range packs {
 
 		p.fakeDB.CountIDs++
 
-		newRecord := entity.Package{
+		newRecord := entity.Pack{
 			ID:        p.fakeDB.CountIDs,
 			CreatedAt: pkg.CreatedAt,
 			Size:      pkg.Size,
@@ -54,9 +54,9 @@ func (p PackageRepository) BulkInsert(ctx context.Context, packages []entity.Pac
 	return nil
 }
 
-func (p PackageRepository) DeleteAll(ctx context.Context) error {
+func (p PackRepository) DeleteAll(ctx context.Context) error {
 
-	p.fakeDB.Records = make(map[uint32]entity.Package)
+	p.fakeDB.Records = make(map[uint32]entity.Pack)
 
 	return nil
 }

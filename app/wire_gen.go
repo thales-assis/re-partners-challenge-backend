@@ -7,17 +7,20 @@
 package app
 
 import (
-	"github.com/re-partners-challenge-backend/internal/domain/service/package"
+	"github.com/re-partners-challenge-backend/internal/domain/service/calculator"
+	"github.com/re-partners-challenge-backend/internal/domain/service/pack"
+	"github.com/re-partners-challenge-backend/internal/handler/http/calculator"
 	"github.com/re-partners-challenge-backend/internal/handler/http/health"
-	"github.com/re-partners-challenge-backend/internal/handler/http/httppackage"
+	"github.com/re-partners-challenge-backend/internal/handler/http/pack"
 	"github.com/re-partners-challenge-backend/internal/infra/config"
 	"github.com/re-partners-challenge-backend/internal/infra/httprouter"
 	"github.com/re-partners-challenge-backend/internal/infra/httpserver"
 	"github.com/re-partners-challenge-backend/internal/infra/log"
 	"github.com/re-partners-challenge-backend/internal/infra/middleware"
 	"github.com/re-partners-challenge-backend/internal/persistence/database"
-	"github.com/re-partners-challenge-backend/internal/persistence/packagepersistence"
-	"github.com/re-partners-challenge-backend/internal/usecase/packageusecase"
+	"github.com/re-partners-challenge-backend/internal/persistence/packpersistence"
+	"github.com/re-partners-challenge-backend/internal/usecase/calculatorusecase"
+	"github.com/re-partners-challenge-backend/internal/usecase/packusecase"
 )
 
 // Injectors from wire.go:
@@ -36,15 +39,20 @@ func Build() (Application, func(), error) {
 	healthCheckHandler := health.ProvideHealthCheckHandler()
 	router := health.ProvideRouter(healthCheckHandler)
 	fakeDatabase := database.ProvideDatabase(zapLogger)
-	repositoryPackage := packagepersistence.ProvidePackageRepository(zapLogger, fakeDatabase)
-	servicePackage := packageservice.ProvidePackageService(zapLogger, repositoryPackage)
-	usecasePackage := packageusecase.ProvidePackageUseCase(zapLogger, servicePackage)
-	getPackagesHandler := httppackage.ProvideGetPackagesHandler(zapLogger, usecasePackage)
-	updatePackagesHandler := httppackage.ProvideUpdatePackagesHandler(zapLogger, usecasePackage)
-	httppackageRouter := httppackage.ProvideRouter(getPackagesHandler, updatePackagesHandler)
+	repositoryPack := packpersistence.ProvidePackRepository(zapLogger, fakeDatabase)
+	servicePack := packservice.ProvidePackService(zapLogger, repositoryPack)
+	usecasePack := packusecase.ProvidePackUseCase(zapLogger, servicePack)
+	getPacksHandler := pack.ProvideGetPacksHandler(zapLogger, usecasePack)
+	updatePacksHandler := pack.ProvideUpdatePacksHandler(zapLogger, usecasePack)
+	packRouter := pack.ProvideRouter(getPacksHandler, updatePacksHandler)
+	serviceCalculator := calculatorservice.ProvideCalculatorService(zapLogger)
+	usecaseCalculator := calculatorusecase.ProvideCalculatorUseCase(zapLogger, serviceCalculator, servicePack)
+	postCalculatorPacksHandler := calculator.ProvidePostCalculatorPackHandler(zapLogger, usecaseCalculator)
+	calculatorRouter := calculator.ProvideRouter(postCalculatorPacksHandler)
 	routes := httpserver.Routes{
 		HealthCheckRouter: router,
-		PackageRouter:     httppackageRouter,
+		PackRouter:        packRouter,
+		CalculatorRouter:  calculatorRouter,
 	}
 	middlewareMiddleware := middleware.ProvideErrorHandlerMiddleware(zapLogger)
 	v := httpserver.ProvideCoreMiddlewares(zapLogger, middlewareMiddleware)

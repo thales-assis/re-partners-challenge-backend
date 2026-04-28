@@ -6,8 +6,8 @@ import (
 	"github.com/re-partners-challenge-backend/internal/domain/entity"
 )
 
-type Package interface {
-	Find(ctx context.Context) ([]entity.Package, error)
-	BulkInsert(ctx context.Context, packages []entity.Package) error
+type Pack interface {
+	Find(ctx context.Context) ([]entity.Pack, error)
+	BulkInsert(ctx context.Context, packs []entity.Pack) error
 	DeleteAll(ctx context.Context) error
 }

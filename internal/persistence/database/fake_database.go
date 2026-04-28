@@ -8,15 +8,15 @@ import (
 
 type FakeDatabase struct {
 	CountIDs uint32
-	Records  map[uint32]entity.Package
+	Records  map[uint32]entity.Pack
 }
 
 type FakeDatabaseTotalItems struct {
-	CountIDs uint32                    `json:"count_ids"`
-	Records  []FakeDatabasePackageItem `json:"records"`
+	CountIDs uint32                 `json:"count_ids"`
+	Records  []FakeDatabasePackItem `json:"records"`
 }
 
-type FakeDatabasePackageItem struct {
+type FakeDatabasePackItem struct {
 	ID        uint32    `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	Size      uint32    `json:"size"`

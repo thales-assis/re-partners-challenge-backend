@@ -1,7 +1,7 @@
-package packagepersistence
+package calculatorservice
 
 import "github.com/google/wire"
 
 var ProviderSet = wire.NewSet(
-	ProvidePackageRepository,
+	ProvideCalculatorService,
 )

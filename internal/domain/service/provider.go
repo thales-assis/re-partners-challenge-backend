@@ -3,9 +3,11 @@ package service
 import (
 	"github.com/google/wire"
 
-	packageservice "github.com/re-partners-challenge-backend/internal/domain/service/package"
+	calculatorservice "github.com/re-partners-challenge-backend/internal/domain/service/calculator"
+	packservice "github.com/re-partners-challenge-backend/internal/domain/service/pack"
 )
 
 var ProviderSet = wire.NewSet(
-	packageservice.ProviderSet,
+	calculatorservice.ProviderSet,
+	packservice.ProviderSet,
 )

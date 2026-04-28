@@ -1,4 +1,4 @@
-package httppackage
+package calculator
 
 import (
 	"encoding/json"
@@ -10,24 +10,24 @@ import (
 	"github.com/uptrace/bunrouter"
 )
 
-type UpdatePackagesHandler bunrouter.HandlerFunc
+type PostCalculatorPacksHandler bunrouter.HandlerFunc
 
-func ProvideUpdatePackagesHandler(
+func ProvidePostCalculatorPackHandler(
 	logger *log.ZapLogger,
-	packageUseCase usecase.Package,
-) UpdatePackagesHandler {
-	return HandleUpdatePackages(logger, packageUseCase)
+	calculatorUseCase usecase.Calculator,
+) PostCalculatorPacksHandler {
+	return HandleCalculatorPack(logger, calculatorUseCase)
 }
 
-func HandleUpdatePackages(
+func HandleCalculatorPack(
 	logger *log.ZapLogger,
-	packageUseCase usecase.Package,
-) UpdatePackagesHandler {
+	calculatorUseCase usecase.Calculator,
+) PostCalculatorPacksHandler {
 	return func(w http.ResponseWriter, req bunrouter.Request) error {
 
 		ctx := req.Context()
 
-		var vm viewmodel.UpdateAllPackages
+		var vm viewmodel.CalculatorPacksRequest
 		if err := json.NewDecoder(req.Body).Decode(&vm); err != nil {
 			return err
 		}
@@ -36,12 +36,11 @@ func HandleUpdatePackages(
 			return err
 		}
 
-		err := packageUseCase.UpdateAll(ctx, vm)
+		response, err := calculatorUseCase.Calculate(ctx, vm.Amount)
 		if err != nil {
 			return err
 		}
 
-		w.WriteHeader(http.StatusNoContent)
-		return nil
+		return bunrouter.JSON(w, response)
 	}
 }

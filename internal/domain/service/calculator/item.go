@@ -1,4 +1,4 @@
-package packer
+package calculatorservice
 
 type item struct {
 	value   int // actual smallest reachable value for this residue

@@ -4,14 +4,14 @@ import (
 	"time"
 )
 
-type Package struct {
+type Pack struct {
 	ID        uint32
 	CreatedAt time.Time
 	Size      uint32
 }
 
-func NewPackage(size int) Package {
-	return Package{
+func NewPack(size int) Pack {
+	return Pack{
 		CreatedAt: time.Now().UTC(),
 		Size:      uint32(size),
 	}

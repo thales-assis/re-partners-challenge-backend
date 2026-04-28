@@ -26,17 +26,17 @@ func ProvideDatabase(
 		return nil
 	}
 
-	result := make(map[uint32]entity.Package)
+	result := make(map[uint32]entity.Pack)
 
 	for _, pkg := range fakeDatabaseTotalItems.Records {
 
-		newPackage := entity.Package{
+		newPack := entity.Pack{
 			ID:        pkg.ID,
 			CreatedAt: pkg.CreatedAt,
 			Size:      pkg.Size,
 		}
 
-		result[newPackage.ID] = newPackage
+		result[newPack.ID] = newPack
 	}
 
 	return &FakeDatabase{
