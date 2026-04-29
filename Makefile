@@ -9,3 +9,6 @@ swagger:
 
 watch:
 	air server --port 8080
+
+run:
+	docker-compose build && docker-compose up
